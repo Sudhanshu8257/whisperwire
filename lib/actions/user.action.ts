@@ -1,5 +1,4 @@
 "use server";
-
 import {
   addDoc,
   and,
@@ -20,7 +19,7 @@ import result from "postcss/lib/result";
 export async function createUser({ clerkId, name, email, picture }: any) {
   try {
     console.log("exist : false");
-    const user = await setDoc(doc(db, "users", email), {
+    const user = await setDoc(doc(db, "users", clerkId), {
       id: clerkId,
       email: email,
       profilePic: picture,
