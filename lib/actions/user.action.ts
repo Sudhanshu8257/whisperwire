@@ -19,18 +19,15 @@ import result from "postcss/lib/result";
 
 export async function createUser({ clerkId, name, email, picture }: any) {
   try {
-    const docRef = doc(db, "users", email);
-    const docSnapshot = await getDoc(docRef);
-    if (!docSnapshot.exists()) {
-      console.log("exist : false");
-      await setDoc(doc(db, "users", email), {
-        id: clerkId,
-        email: email,
-        profilePic: picture,
-        userName: name,
-        friends: [],
-      });
-    }
+    console.log("exist : false");
+    const user = await setDoc(doc(db, "users", email), {
+      id: clerkId,
+      email: email,
+      profilePic: picture,
+      userName: name,
+      friends: [],
+    });
+    return user;
   } catch (error) {
     console.log(error);
     throw error;
