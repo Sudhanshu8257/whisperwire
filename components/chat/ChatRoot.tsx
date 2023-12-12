@@ -54,7 +54,9 @@ const ChatRoot = ({ searchParams }: SearchParamsProps) => {
   return (
     <div className=" flex flex-col w-full justify-start items-center h-full">
       <Header
+        //@ts-ignore
         userName={user?.userName}
+        //@ts-ignore
         profilePic={user?.profilePic}
         status={"online"}
       />
