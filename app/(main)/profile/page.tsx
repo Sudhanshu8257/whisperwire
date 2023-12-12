@@ -1,26 +1,27 @@
-"use client";
-import { Button } from "@/components/ui/button";
-import { auth } from "@/lib/firebase";
+import SignOutBtn from "@/components/shared/SignOutBtn";
+import { fetchUser } from "@/lib/actions/user.action";
+import { auth } from "@clerk/nextjs";
 import React from "react";
-import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-const Page = () => {
-  const [signOut, loading, error] = useSignOut(auth);
-  const [user] = useAuthState(auth);
+const Page = async () => {
+  const currentUser = auth();
+  const user = await fetchUser({ userAId: currentUser.userId });
   return (
-    <div className="flex flex-col gap-2 p-8 bg-secondary">
-      <h1>{user?.email}</h1>
-      <h1>{user?.displayName}</h1>
-      <Button
-        onClick={async () => {
-          const success = await signOut();
-          if (success) {
-            alert("You are sign out");
-          }
-        }}
-      >
-        Log Out
-      </Button>
+    <div className="w-full h-screen flex flex-col items-center justify-center ">
+      <div className="flex flex-col items-center justify-center gap-2 p-8 bg-secondary rounded-xl">
+        <Avatar className="w-[68px] h-[68px]">
+          <AvatarImage
+            src={user?.profilePic ? user?.profilePic : "/assets/dog1.jpg"}
+          />
+          <AvatarFallback>{user?.userName}</AvatarFallback>
+        </Avatar>
+        <h1 className="font-bold text-lg">{user?.userName}</h1>
+        <h1 className="font-medium text-md">{user?.email}</h1>
+        <div className="mt-5">
+          <SignOutBtn />
+        </div>
+      </div>
     </div>
   );
 };

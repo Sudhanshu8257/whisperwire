@@ -35,6 +35,11 @@ export default function Home() {
           height={550}
         />
       </div>
+      <div className="flex flex-col bg-yellow-200 p-6 fixed bottom-3 right-3 rounded-md">
+        <h1 className="text-lg font-bold text-[#1e1e1e]">
+          ✨🚧 Under Construction: Crafting Awesomeness! 🚧✨
+        </h1>
+      </div>
     </main>
   );
 }

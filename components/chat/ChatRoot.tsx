@@ -1,85 +1,70 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import Header from "./Header";
 import ChatInput from "./ChatInput";
 import ChatBox from "./ChatBox";
+import { SearchParamsProps } from "@/lib/utils";
+import {
+  collection,
+  limit,
+  limitToLast,
+  onSnapshot,
+  orderBy,
+  query,
+} from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { fetchUser } from "@/lib/actions/user.action";
+const ChatRoot = ({ searchParams }: SearchParamsProps) => {
+  const chatId = searchParams?.chat;
+  const userId = searchParams?.user;
+  const [messages, setMessages] = useState([]);
+  const [user, setUser] = useState();
+  useEffect(() => {
+    const q = query(
+      collection(db, "conversations", `${chatId}`, "messages"),
+      orderBy("time"),
+      limitToLast(10)
+    );
+    async function fetch() {
+      const result: any = await fetchUser({ userAId: userId });
+      setUser(result);
+    }
+    fetch();
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const receivedMessages: any = [];
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === "added") {
+          const messageData = change?.doc?.data();
+          const time = messageData?.time;
+          const formattedMessage = {
+            ...messageData,
+            senderId: messageData?.senderId?.id,
+            time: time.toDate(),
+            id: change?.doc?.id,
+          };
+          receivedMessages.push(formattedMessage);
+        }
+      });
+      // @ts-ignore
+      setMessages((prevMessages) => [...prevMessages, ...receivedMessages]);
+    });
 
-const ChatRoot = () => {
-  const conversation = [
-    {
-      id: 1,
-      timestamp: "2023-11-26T13:00:45Z",
-      userId: "user123",
-      message: "Hello, how are you?",
-    },
-    {
-      id: 2,
-      timestamp: "2023-11-26T13:01:00Z",
-      userId: "assistant",
-      message: "Hello, I'm doing well. How can I assist you today?",
-    },
-    {
-      id: 3,
-      timestamp: "2023-11-26T13:01:15Z",
-      userId: "user123",
-      message: "Can you help me with my homework?",
-    },
-    {
-      id: 4,
-      timestamp: "2023-11-26T13:01:30Z",
-      userId: "assistant",
-      message: "Of course! I'd be happy to help. What do you need help with?",
-    },
-    {
-      id: 5,
-      timestamp: "2023-11-26T13:02:00Z",
-      userId: "user123",
-      message: "I need help with my math homework. I'm stuck on a problem.",
-    },
-    {
-      id: 6,
-      timestamp: "2023-11-26T13:02:15Z",
-      userId: "assistant",
-      message:
-        "Sure, I'd be glad to help with your math problem. Could you please tell me what the problem is?",
-    },
-    {
-      id: 7,
-      timestamp: "2023-11-26T13:02:30Z",
-      userId: "user123",
-      message:
-        "The problem is about calculating the area of a circle. I'm not sure how to do it.",
-    },
-    {
-      id: 8,
-      timestamp: "2023-11-26T13:02:45Z",
-      userId: "assistant",
-      message:
-        "The area of a circle can be calculated using the formula $$A = \\pi r^2$$ where $$A$$ is the area and $$r$$ is the radius of the circle.",
-    },
-    {
-      id: 9,
-      timestamp: "2023-11-26T13:03:00Z",
-      userId: "user123",
-      message: "Oh, I see. That makes sense. Thank you for your help!",
-    },
-    {
-      id: 10,
-      timestamp: "2023-11-26T13:03:15Z",
-      userId: "assistant",
-      message:
-        "You're welcome! I'm glad I could help. If you have any other questions, feel free to ask.",
-    },
-  ];
+    return () => unsubscribe();
+  }, [chatId, userId]);
   return (
     <div className=" flex flex-col w-full justify-start items-center h-full">
-      <Header />
+      <Header
+        userName={user?.userName}
+        profilePic={user?.profilePic}
+        status={"online"}
+      />
       <div className="flex-grow w-full flex flex-col overflow-y-auto custom-scrollbar gap-3 p-4">
-        {conversation.map((chat) => (
+        {messages?.map((chat: any) => (
           <ChatBox
             key={chat.id}
-            user={chat.userId}
-            message={chat.message}
-            timestamp={chat.timestamp}
+            user={chat.senderId}
+            message={chat.content}
+            timestamp={chat.time}
           />
         ))}
       </div>

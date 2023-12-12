@@ -1,31 +1,47 @@
-"use server";
+"use client";
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "../ui/button";
 import Image from "next/image";
 import { MotionDiv } from "../shared/MotionDiv";
-import {
-  checkRequest,
-  fetchUser,
-  sendUserRequest,
-} from "@/lib/actions/user.action";
+import { confirmRequest, declineRequest } from "@/lib/actions/user.action";
 
 interface FriendsRequestCard {
   source: string;
   username: string;
   mail: string;
   index: number;
+  currentUser: string | null;
+  userId: string;
+  reff: string;
 }
+// TODO: ADD TIMESTAMP
 const FriendRequestCard = ({
   source,
   username,
   mail,
-  index,
+  currentUser,
+  userId,
+  reff,
 }: FriendsRequestCard) => {
   const variants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1 },
   };
+  async function accept() {
+    await confirmRequest({
+      senderId: userId,
+      reciverId: currentUser,
+      pathName: "/addUser",
+      reff: reff,
+    });
+  }
+  async function decline() {
+    await declineRequest({
+      pathName: "/addUser",
+      reff: reff,
+    });
+  }
   return (
     <MotionDiv
       className=" flex flex-col items-center justify-between px-8 py-5 overflow-hidden w-[264px] bg-secondary rounded-lg hover:bg-muted "
@@ -48,7 +64,10 @@ const FriendRequestCard = ({
       </div>
       <div className="-mb-5 w-[264px] flex items-center justify-center gap-1 h-fit">
         <>
-          <Button className="px-4 w-full mt-8 bg-destructive gap-2 font-bold text-destructive-foreground rounded-none rounded-tr-lg">
+          <Button
+            onClick={decline}
+            className="px-4 w-full mt-8 bg-destructive gap-2 font-bold text-destructive-foreground rounded-none rounded-tr-lg"
+          >
             <Image
               src={"/assets/icons/close.svg"}
               alt="plain"
@@ -57,7 +76,10 @@ const FriendRequestCard = ({
             />
             Decline
           </Button>
-          <Button className="px-4 w-full mt-8 bg-success gap-2 font-bold text-success-foreground rounded-none rounded-tl-lg ">
+          <Button
+            onClick={accept}
+            className="px-4 w-full mt-8 bg-success gap-2 font-bold text-success-foreground rounded-none rounded-tl-lg "
+          >
             <Image
               src={"/assets/icons/tick.svg"}
               alt="plain"

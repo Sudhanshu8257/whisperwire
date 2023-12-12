@@ -1,3 +1,4 @@
+import { useAuth } from "@clerk/nextjs";
 import React from "react";
 interface ChatBoxProps {
   user: string;
@@ -5,7 +6,7 @@ interface ChatBoxProps {
   timestamp: string;
 }
 const ChatBox = ({ user, message, timestamp }: ChatBoxProps) => {
-  const userId = "user123";
+  const { userId } = useAuth();
   let date = new Date(timestamp);
   let time = date.toLocaleTimeString([], {
     hour: "2-digit",

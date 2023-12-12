@@ -4,51 +4,74 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "../ui/button";
 import Image from "next/image";
 import { MotionDiv } from "../shared/MotionDiv";
-import { checkRequest, sendUserRequest } from "@/lib/actions/user.action";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "@/lib/firebase";
-import { usePathname } from "next/navigation";
+import {
+  checkRequest,
+  createConversation,
+  deleteFriend,
+  sendUserRequest,
+} from "@/lib/actions/user.action";
+import { usePathname, useRouter } from "next/navigation";
 interface FriendsCardProps {
   source: string;
   username: string;
   mail: string;
   index: number;
   friend: boolean;
+  userId: string;
+  currentUser: string | null;
 }
+// TODO: ADD TIMESTAMP
 const FriendsCard = ({
   source,
   username,
   mail,
+  currentUser,
   index,
   friend,
+  userId,
 }: FriendsCardProps) => {
   const variants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1 },
   };
-
-  const [user] = useAuthState(auth);
   const [sent, setIsSent] = useState(false);
+  const pathName = usePathname();
+  const router = useRouter();
   useEffect(() => {
     if (!friend) {
       const check = async () => {
         let result = await checkRequest({
-          userAId: user?.email,
-          userBId: mail,
+          senderId: currentUser,
+          reciverId: userId,
         });
         setIsSent(result);
       };
       check();
     }
-  }, [friend, mail, user?.email]);
-  const pathName = usePathname();
+  }, [friend, userId, currentUser]);
+
   const sendRequest = async () => {
     await sendUserRequest({
-      userAId: user?.email,
-      userBId: mail,
+      senderId: currentUser,
+      reciverId: userId,
       path: pathName,
     });
     setIsSent(true);
+  };
+  const deleteFoe = async () => {
+    await deleteFriend({
+      senderId: currentUser,
+      reciverId: userId,
+      pathName: pathName,
+    });
+    setIsSent(true);
+  };
+  const message = async () => {
+    const docRef = await createConversation({
+      userBId: userId,
+      currentUserId: currentUser,
+    });
+    router.push(`/chats?chat=${docRef}&user=${userId}`);
   };
 
   return (
@@ -91,7 +114,10 @@ const FriendsCard = ({
           </Button>
         ) : (
           <>
-            <Button className="px-4 w-full mt-8 bg-transparent hover:bg-transparent gap-2 font-bold dark:text-white text-[#1e1e1e] rounded-none rounded-tr-lg">
+            <Button
+              onClick={deleteFoe}
+              className="px-4 w-full mt-8 bg-transparent hover:bg-transparent gap-2 font-bold dark:text-white text-[#1e1e1e] rounded-none rounded-tr-lg"
+            >
               <Image
                 src={"/assets/icons/trash.svg"}
                 alt="plain"
@@ -108,7 +134,10 @@ const FriendsCard = ({
               />
               Remove
             </Button>
-            <Button className="px-4 w-full mt-8 bg-primary gap-2 font-bold text-primary-foreground rounded-none rounded-tl-lg ">
+            <Button
+              onClick={message}
+              className="px-4 w-full mt-8 bg-primary gap-2 font-bold text-primary-foreground rounded-none rounded-tl-lg "
+            >
               <Image
                 src={"/assets/icons-black/chat-line-bl.svg"}
                 alt="plain"

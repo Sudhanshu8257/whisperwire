@@ -2,8 +2,12 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/shared/theme-provider";
-import { RequestContextProvider } from "@/context/Request";
-import { ClerkProvider } from "@clerk/nextjs";
+import {
+  ClerkProvider,
+  RedirectToSignIn,
+  SignedIn,
+  SignedOut,
+} from "@clerk/nextjs";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -36,7 +40,7 @@ export default function RootLayout({
               },
             }}
           >
-            <RequestContextProvider>{children}</RequestContextProvider>
+            {children}
           </ClerkProvider>
         </ThemeProvider>
       </body>
