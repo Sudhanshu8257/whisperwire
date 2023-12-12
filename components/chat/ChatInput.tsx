@@ -19,7 +19,7 @@ const ChatInput = () => {
     }
   };
   return (
-    <div className="w-full h-[90px] bg-secondary flex items-center justify-center gap-4 py-5 px-6">
+    <div className="w-full min-h-[90px] bg-secondary flex items-center justify-center gap-4 py-5 px-6">
       <div className="w-[80%] h-full flex flex-grow items-center gap-1 bg-[#C5F7FF] rounded-lg py-1">
         <Image
           src={"/assets/icons/link.svg"}

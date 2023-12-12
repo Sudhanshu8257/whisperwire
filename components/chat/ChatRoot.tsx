@@ -20,6 +20,7 @@ const ChatRoot = ({ searchParams }: SearchParamsProps) => {
   const [messages, setMessages] = useState([]);
   const [user, setUser] = useState();
   useEffect(() => {
+    setMessages([]);
     const q = query(
       collection(db, "conversations", `${chatId}`, "messages"),
       orderBy("time"),
