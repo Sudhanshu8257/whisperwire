@@ -59,7 +59,7 @@ const UserCard = ({
         >
           {userName}
         </p>
-        {lastChat && (
+        {lastChat && !current && (
           <p
             className={`text-[10px] font-medium line-clamp-1 ${
               current ? "text-primary-foreground" : "text-muted-foreground"

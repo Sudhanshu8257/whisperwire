@@ -9,7 +9,7 @@ interface HeaderProps {
 
 const Header = ({ userName, profilePic, status }: HeaderProps) => {
   return (
-    <div className="w-full h-[80px] bg-secondary flex items-center justify-between px-4">
+    <div className="w-full min-h-[80px] bg-secondary flex items-center justify-between px-4">
       <div className="flex items-center justify-start gap-2">
         <Avatar>
           <AvatarImage src={profilePic ? profilePic : "/assets/dog1.jpg"} />

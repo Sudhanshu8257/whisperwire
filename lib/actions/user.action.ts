@@ -354,6 +354,7 @@ export async function createConversation(params: createConversationParams) {
     );
     let conversationDocRef;
     const docSnapshot = await getDocs(q);
+
     docSnapshot?.forEach((doc) => {
       // doc.data() is never undefined for query doc snapshots
       const docData = doc?.data();

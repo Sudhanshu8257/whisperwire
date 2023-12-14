@@ -59,8 +59,8 @@ const FriendRequestCard = ({
           height={80}
           className="rounded-full"
         />
-        <p className="font-bold text-[24px] mt-2">{username}</p>
-        <p className="font-regular text-[16px] -mt-1">{mail}</p>
+        <p className="font-bold text-[20px] mt-2">{username}</p>
+        <p className="font-regular text-[14px] -mt-1">{mail}</p>
       </div>
       <div className="-mb-5 w-[264px] flex items-center justify-center gap-1 h-fit">
         <>

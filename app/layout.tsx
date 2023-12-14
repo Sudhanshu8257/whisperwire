@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Noto_Color_Emoji } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/shared/theme-provider";
 import {
@@ -9,7 +9,11 @@ import {
   SignedOut,
 } from "@clerk/nextjs";
 const inter = Inter({ subsets: ["latin"] });
-
+const noto = Noto_Color_Emoji({
+  subsets: ["emoji"],
+  weight: "400",
+  variable: "--font-noto",
+});
 export const metadata: Metadata = {
   title: "WhisperWire",
   description:
